@@ -1,0 +1,8 @@
+version: '2.3'
+
+services:
+  discount-server:
+    image: hashorg/hash-mock-discount-service
+    container_name: discount-server
+    ports:
+      - "50051:50051"
