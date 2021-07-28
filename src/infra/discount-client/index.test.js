@@ -2,7 +2,7 @@ const path = require('path')
 const test = require('ava')
 const { stub } = require('sinon')
 
-const grpcClient = require('../grpc')
+const grpcClient = require('../../external/grpc')
 const {
   createDiscountClient,
   defaultClientOptions,
@@ -59,11 +59,11 @@ test('createDiscountClient > should successfully call "createClient" with defaul
     (clientOptions, serverAddress) => ({ ...clientOptions, serverAddress })
   )
 
-  const client = createDiscountClient('http://localhost:50051')
+  const discountClient = createDiscountClient('http://localhost:50051')
 
-  t.is(client.packageName, defaultClientOptions.packageName)
-  t.is(client.serviceName, defaultClientOptions.serviceName)
-  t.is(client.serverAddress, 'http://localhost:50051')
+  t.is(discountClient.client.packageName, defaultClientOptions.packageName)
+  t.is(discountClient.client.serviceName, defaultClientOptions.serviceName)
+  t.is(discountClient.client.serverAddress, 'http://localhost:50051')
 
   grpcCreateClientStub.restore()
 })
@@ -93,14 +93,14 @@ test('createDiscountClient > should successfully call "createClient" with the op
     protoFileName: 'new-discount-proto',
   }
 
-  const client = createDiscountClient(
+  const discountClient = createDiscountClient(
     'http://fake-grpc-server:50051',
     clientOptions
   )
 
-  t.is(client.packageName, clientOptions.packageName)
-  t.is(client.serviceName, clientOptions.serviceName)
-  t.is(client.serverAddress, 'http://fake-grpc-server:50051')
+  t.is(discountClient.client.packageName, clientOptions.packageName)
+  t.is(discountClient.client.serviceName, clientOptions.serviceName)
+  t.is(discountClient.client.serverAddress, 'http://fake-grpc-server:50051')
 
   grpcCreateClientStub.restore()
   pathResolveStub.restore()
@@ -124,9 +124,8 @@ test('getProductPercentageDiscount > should successfully get an item percentage 
   }
 
   const productPercentageDiscount = await getProductPercentageDiscount(
-    clientMock,
-    productId
-  )
+    clientMock
+  )(productId)
 
   t.is(productPercentageDiscount, percentageDiscount)
 })
@@ -136,9 +135,10 @@ test('getProductPercentageDiscount > should throw an error when client responds 
   const clientMock = {
     getDiscount: (param, callback) => callback(errorClient),
   }
+  const productId = 20
 
   try {
-    await getProductPercentageDiscount(clientMock)
+    await getProductPercentageDiscount(clientMock)(productId)
   } catch (error) {
     t.is(error.message, 'Can not communicate with gRPC server')
 
@@ -157,7 +157,7 @@ test('getProductPercentageDiscount > should throw an error when discount server 
   }
 
   try {
-    await getProductPercentageDiscount(clientMock, productId)
+    await getProductPercentageDiscount(clientMock)(productId)
   } catch (error) {
     t.is(
       error.message,
@@ -179,7 +179,7 @@ test('getProductPercentageDiscount > should throw an error when can not communic
   }
 
   try {
-    await getProductPercentageDiscount(clientMock, productId)
+    await getProductPercentageDiscount(clientMock)(productId)
   } catch (error) {
     t.is(error.message, 'getDiscount is not a function')
 

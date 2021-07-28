@@ -1,12 +1,32 @@
 const path = require('path')
 const { equals } = require('ramda')
 
-const grpcClient = require('../grpc/index')
+const grpcClient = require('../../external/grpc')
 
 const defaultClientOptions = {
   packageName: 'discount',
   serviceName: 'Discount',
   protoFileName: 'discount',
+}
+
+const getProductPercentageDiscount = (client) => async (id) => {
+  return new Promise((resolve, reject) =>
+    client.getDiscount({ productID: id }, (error, response) => {
+      if (error) {
+        return reject(error)
+      }
+
+      const percentage = response.percentage
+        ? Number(response.percentage)
+        : reject(
+            new Error(
+              'Discount server response does not contain percentage property'
+            )
+          )
+
+      return resolve(percentage)
+    })
+  )
 }
 
 const createDiscountClient = (
@@ -39,7 +59,7 @@ const createDiscountClient = (
     protoFileAbsolutepath
   )
 
-  return grpcClient.createClient(
+  const client = grpcClient.createClient(
     {
       packageDefinition,
       packageName: options.packageName,
@@ -47,26 +67,11 @@ const createDiscountClient = (
     },
     serverDiscountAddress
   )
-}
 
-const getProductPercentageDiscount = async (client, id) => {
-  return new Promise((resolve, reject) =>
-    client.getDiscount({ productID: id }, (error, response) => {
-      if (error) {
-        return reject(error)
-      }
-
-      const percentage = response.percentage
-        ? Number(response.percentage)
-        : reject(
-            new Error(
-              'Discount server response does not contain percentage property'
-            )
-          )
-
-      return resolve(percentage)
-    })
-  )
+  return {
+    client,
+    getProductPercentageDiscount: getProductPercentageDiscount(client),
+  }
 }
 
 module.exports = {
