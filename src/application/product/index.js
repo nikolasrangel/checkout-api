@@ -41,7 +41,7 @@ const getProductById = async (
       error: error.message,
     })
 
-    throw new Error(`Can not find product with id: #${id}`)
+    return null
   }
 }
 
@@ -63,7 +63,7 @@ const getGiftProduct = async (
       error: error.message,
     })
 
-    throw new Error(errorMessage)
+    return null
   }
 }
 

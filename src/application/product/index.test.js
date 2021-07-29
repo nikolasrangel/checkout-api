@@ -31,7 +31,7 @@ test('getProductById > should get undefined as result for a nonexistent product'
   t.is(product, null)
 })
 
-test('getProductById > should throw an error when can not find a product', async (t) => {
+test('getProductById > should not throw an error when occur a problem with database communication', async (t) => {
   const productId = 42
   const databaseMock = {
     Product: {
@@ -41,17 +41,9 @@ test('getProductById > should throw an error when can not find a product', async
     },
   }
 
-  t.plan(2)
+  const product = await getProductById(productId, databaseMock)
 
-  try {
-    await getProductById(productId, databaseMock)
-  } catch (error) {
-    t.is(error.message, `Can not find product with id: #${productId}`)
-
-    return t.pass()
-  }
-
-  return t.fail()
+  t.is(product, null)
 })
 
 test('getGiftProduct > should successfully get a gift product', async (t) => {
@@ -61,7 +53,7 @@ test('getGiftProduct > should successfully get a gift product', async (t) => {
   t.true(giftProduct.is_gift)
 })
 
-test('getGiftProduct > should throw an error when can not find a gift product', async (t) => {
+test('getGiftProduct > should not throw an error occur a problem with database communication', async (t) => {
   const databaseMock = {
     Product: {
       find: () => {
@@ -70,15 +62,7 @@ test('getGiftProduct > should throw an error when can not find a gift product', 
     },
   }
 
-  t.plan(2)
+  const giftProduct = await getGiftProduct(databaseMock)
 
-  try {
-    await getGiftProduct(databaseMock)
-  } catch (error) {
-    t.is(error.message, 'Can not find gift product in database')
-
-    return t.pass()
-  }
-
-  return t.fail()
+  t.is(giftProduct, null)
 })
