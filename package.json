@@ -9,7 +9,7 @@
   "private": true,
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "ava -v 'src/**/*.test.js'",
     "lint": "eslint --config .eslintrc.js 'src/**/*.js'",
     "format": "prettier --write 'src/**/*.js'"
   },
