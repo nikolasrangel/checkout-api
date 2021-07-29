@@ -4,9 +4,10 @@ const {
   calculateTotalAmount,
   calculateTotalAmountWithDiscount,
   calculateTotalDiscount,
-  createProductObject,
   createShoppingCart,
 } = require('./index')
+
+const { createProductObject } = require('../product')
 
 test.before((t) => {
   const giftProductMock = {
@@ -29,44 +30,6 @@ test.before((t) => {
     giftProduct: giftProductMock,
     product: randomProduct,
   }
-})
-
-test('createProductObject > should create a product object for a gift with 1 as quantity and 0 for amount and discount', (t) => {
-  const { giftProduct } = t.context
-
-  const productObject = createProductObject(giftProduct)
-
-  t.deepEqual(productObject, {
-    id: giftProduct.id,
-    quantity: 1,
-    unit_amount: 0,
-    total_amount: 0,
-    discount: 0,
-    is_gift: true,
-  })
-})
-
-test('createProductObject > should create a product object for a produt which is not a gift', (t) => {
-  const { product } = t.context
-  const discount = 0.5
-  const order = {
-    id: product.id,
-    quantity: 2,
-  }
-
-  const productObject = createProductObject(product, discount, order)
-
-  const totalAmount = product.amount * order.quantity
-  const totalDiscount = discount * totalAmount
-
-  t.deepEqual(productObject, {
-    id: product.id,
-    quantity: order.quantity,
-    unit_amount: product.amount,
-    total_amount: totalAmount,
-    discount: totalDiscount,
-    is_gift: false,
-  })
 })
 
 test('createShoppingCart > create a shopping cart for one product', (t) => {

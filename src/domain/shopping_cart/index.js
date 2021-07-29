@@ -1,4 +1,4 @@
-const { calculateProductDiscount } = require('../discount')
+const { calculateProductDiscount } = require('../product')
 
 const calculateTotalAmount = (products) => {
   const totalAmount = products.reduce(
@@ -40,28 +40,10 @@ const createShoppingCart = (products) => {
   }
 }
 
-const createProductObject = (product, discount = 0, order = {}) => {
-  const { quantity } = order
-  const { id, amount, is_gift: isGift } = product
-
-  const productDiscount = calculateProductDiscount(amount, discount)
-  const totalDiscount = quantity * productDiscount
-
-  return {
-    id,
-    quantity: isGift ? 1 : quantity,
-    unit_amount: isGift ? 0 : amount,
-    total_amount: isGift ? 0 : quantity * amount,
-    discount: isGift ? 0 : totalDiscount,
-    is_gift: isGift || false,
-  }
-}
-
 module.exports = {
   calculateTotalAmount,
   calculateTotalAmountWithDiscount,
   calculateTotalDiscount,
   shouldAddGiftProduct,
   createShoppingCart,
-  createProductObject,
 }
