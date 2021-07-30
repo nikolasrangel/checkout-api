@@ -2,14 +2,11 @@ const path = require('path')
 const { initialize } = require('../../external/database/json')
 const { getLogger } = require('../../infra/logger')
 
-const getDatabasePath = () => path.resolve(__dirname, 'products.json')
-
-const getDatabase = (
-  databasePath = getDatabasePath(),
-  logger = getLogger()
-) => {
+const getDatabase = (databasePath, logger = getLogger()) => {
   try {
-    const data = initialize(databasePath)
+    const databaseFullPath = path.resolve(__dirname, databasePath)
+
+    const data = initialize(databaseFullPath)
 
     return {
       Product: data,
@@ -26,46 +23,43 @@ const getDatabase = (
   }
 }
 
-const getProductById = async (
-  id,
-  database = getDatabase(),
-  logger = getLogger()
-) => {
-  try {
-    const product = database.Product.find((product) => product.id === id)
+const getProductById =
+  (database) =>
+  async (id, logger = getLogger()) => {
+    try {
+      const product = database.Product.find((product) => product.id === id)
 
-    return product ? product : null
-  } catch (error) {
-    logger.error({
-      message: `Error finding product with id: #${id}`,
-      error: error.message,
-    })
+      return product ? product : null
+    } catch (error) {
+      logger.error({
+        message: `Error finding product with id: #${id}`,
+        error: error.message,
+      })
 
-    return null
+      return null
+    }
   }
-}
 
-const getGiftProduct = async (
-  database = getDatabase(),
-  logger = getLogger()
-) => {
-  try {
-    const productGift = database.Product.find(
-      (product) => product.is_gift === true
-    )
+const getGiftProduct =
+  (database) =>
+  async (logger = getLogger()) => {
+    try {
+      const productGift = database.Product.find(
+        (product) => product.is_gift === true
+      )
 
-    return productGift ? productGift : null
-  } catch (error) {
-    const errorMessage = 'Can not find gift product in database'
+      return productGift ? productGift : null
+    } catch (error) {
+      const errorMessage = 'Can not find gift product in database'
 
-    logger.error({
-      message: errorMessage,
-      error: error.message,
-    })
+      logger.error({
+        message: errorMessage,
+        error: error.message,
+      })
 
-    return null
+      return null
+    }
   }
-}
 
 module.exports = {
   getDatabase,
