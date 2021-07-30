@@ -6,3 +6,14 @@ services:
     container_name: discount-server
     ports:
       - "50051:50051"
+
+  tests:
+    build:
+      context: .
+      target: development
+    command: npm run test:$TEST_TYPE
+    env_file: .env.example
+    volumes:
+      - .:/usr/app
+    depends_on:
+      - discount-server
