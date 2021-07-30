@@ -10,6 +10,7 @@
   "main": "src/index.js",
   "scripts": {
     "test:unit": "ava -vs 'src/**/*.test.js'",
+    "test:integration": "ava -vs 'tests/integration/**/*.test.js'",
     "lint": "eslint --config .eslintrc.js 'src/**/*.js'",
     "format": "prettier --write 'src/**/*.js'"
   },
