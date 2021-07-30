@@ -9,7 +9,7 @@
   "private": true,
   "main": "src/index.js",
   "scripts": {
-    "test": "ava -v 'src/**/*.test.js'",
+    "test": "ava -vs 'src/**/*.test.js'",
     "lint": "eslint --config .eslintrc.js 'src/**/*.js'",
     "format": "prettier --write 'src/**/*.js'"
   },
