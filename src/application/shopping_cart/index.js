@@ -54,6 +54,10 @@ const createShoppingCart =
         productDatabase
       )()
 
+      if (!giftProduct) {
+        return shoppingCart
+      }
+
       const giftProductObject = productDomain.createProductObject(giftProduct)
 
       const shoppingCartWithGiftProduct =
