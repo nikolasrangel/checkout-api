@@ -14,7 +14,7 @@ const expectedProductProperties = [
 ]
 
 test.before((t) => {
-  const server = createServer()
+  const server = createServer({ port: 8002 })
 
   t.context = {
     server,
