@@ -28,6 +28,18 @@ const createServerEndpoints = (server) => {
 
 const closeServer = (server) => http.closeServer(server)
 
+const handleSignalEvents = (server, serverProcess) => (signal) => {
+  const { logger } = server
+
+  logger.fatal({
+    message: `Received a ${signal} signal. Shutting down HTTP server`,
+  })
+
+  http.closeServer(server)
+
+  serverProcess.exit(1)
+}
+
 const createServer = (options) => {
   const serverOptions = mergeRight(getServerOptions(process), options)
 
@@ -35,10 +47,13 @@ const createServer = (options) => {
 
   createServerEndpoints(server)
 
+  http.handleServerProcessSignalEvents(server, process, handleSignalEvents)
+
   return server
 }
 
 module.exports = {
   createServer,
   closeServer,
+  handleSignalEvents,
 }

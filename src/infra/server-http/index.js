@@ -62,8 +62,19 @@ const createServerEndpoint = (server, endpoint) => {
 
 const closeServer = (server) => server.listener.close()
 
+const handleServerProcessSignalEvents = (
+  server,
+  serverProcess,
+  handleSignalEventFunction
+) => {
+  serverProcess.on('SIGTERM', handleSignalEventFunction(server, serverProcess))
+
+  serverProcess.on('SIGINT', handleSignalEventFunction(server, serverProcess))
+}
+
 module.exports = {
   createServer,
   createServerEndpoint,
   closeServer,
+  handleServerProcessSignalEvents,
 }
