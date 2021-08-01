@@ -11,6 +11,7 @@
   "scripts": {
     "test:unit": "ava -vs 'src/**/*.test.js'",
     "test:integration": "ava -vs 'tests/integration/**/*.test.js'",
+    "test:functional": "ava -vs 'tests/functional/**/*.test.js'",
     "lint": "eslint --config .eslintrc.js 'src/**/*.js'",
     "format": "prettier --write 'src/**/*.js'"
   },
@@ -29,7 +30,8 @@
     "husky": "4.2.3",
     "lint-staged": "10.1.3",
     "prettier": "2.3.2",
-    "sinon": "11.1.1"
+    "sinon": "11.1.1",
+    "supertest": "6.1.4"
   },
   "husky": {
     "hooks": {
