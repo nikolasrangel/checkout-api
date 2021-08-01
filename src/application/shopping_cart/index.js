@@ -54,8 +54,13 @@ const createShoppingCart =
         productDatabase
       )()
 
+      const giftProductObject = productDomain.createProductObject(giftProduct)
+
       const shoppingCartWithGiftProduct =
-        shoppingCartDomain.addProductToShoppingCart(shoppingCart, giftProduct)
+        shoppingCartDomain.addProductToShoppingCart(
+          shoppingCart,
+          giftProductObject
+        )
 
       return shoppingCartWithGiftProduct
     }

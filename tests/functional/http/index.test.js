@@ -1,7 +1,17 @@
 const test = require('ava')
 const request = require('supertest')
+const { equals } = require('ramda')
 
 const { createServer } = require('../../../src/entrypoint/http')
+
+const expectedProductProperties = [
+  'id',
+  'quantity',
+  'unit_amount',
+  'total_amount',
+  'discount',
+  'is_gift',
+]
 
 test.before((t) => {
   const server = createServer()
@@ -48,9 +58,33 @@ test('server http > should get a response with 200 as status code from a valid r
     ],
   }
 
-  const response = await request(server)
-    .post('/checkout')
-    .send(requestBody)
+  const response = await request(server).post('/checkout').send(requestBody)
 
   t.is(response.statusCode, 200)
+})
+
+test('server http > should get a checkout with products containing all expected properties', async (t) => {
+  const { server } = t.context
+
+  const requestBody = {
+    products: [
+      {
+        id: 1,
+        quantity: 2,
+      },
+    ],
+  }
+
+  const response = await request(server).post('/checkout').send(requestBody)
+
+  const { products } = response.body
+
+  const productsContainAllExpectedKeys = products.every((product) => {
+    const productProperties = Object.keys(product)
+
+    return equals(productProperties, expectedProductProperties)
+  })
+
+  t.is(response.statusCode, 200)
+  t.true(productsContainAllExpectedKeys)
 })
