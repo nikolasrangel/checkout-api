@@ -1,4 +1,5 @@
 const serverBuilder = require('express')
+const disableUnsafeHeadersMiddleware = require('helmet')
 
 const createServer = (options) => {
   const { port } = options
@@ -10,28 +11,47 @@ const createServer = (options) => {
   return server
 }
 
-const serverMiddlewareRegister = (server, middleware) => {
-  server.use(middleware)
+const serverMiddlewareRegister = (middleware) => (server) => {
+  server.use(middleware())
 
   return server
 }
 
-const serverWithLogger = (server, logger) => {
+const serverWithLogger = (logger) => (server) => {
   server.logger = logger
 
   return server
 }
 
-const serverWithDatabase = (server, database) => {
+const serverWithDatabase = (database) => (server) => {
   server.database = database
 
   return server
 }
 
-const serverEndpointRegister = (server, options) => {
+const serverEndpointRegister = (options) => (server) => {
   const { method, endpoint, handler } = options
 
   return server[method](endpoint, handler)
+}
+
+const getServerMiddlewares = () => {
+  return {
+    disableUnsafeHeaders: disableUnsafeHeadersMiddleware,
+    parseJSONRequests: serverBuilder.json,
+  }
+}
+
+const serverWithClients = (clients) => (server) => {
+  server.clients = clients
+
+  return server
+}
+
+const serverWithFeatures = (features) => (server) => {
+  server.features = features
+
+  return server
 }
 
 module.exports = {
@@ -40,4 +60,7 @@ module.exports = {
   serverWithLogger,
   serverWithDatabase,
   serverEndpointRegister,
+  getServerMiddlewares,
+  serverWithClients,
+  serverWithFeatures,
 }
