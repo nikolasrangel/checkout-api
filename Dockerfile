@@ -29,4 +29,4 @@ RUN npm install --production -q
 
 COPY . .
 
-CMD npm run start
+CMD npm run start:http-server

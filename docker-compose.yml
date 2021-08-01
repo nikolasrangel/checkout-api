@@ -17,3 +17,18 @@ services:
       - .:/usr/app
     depends_on:
       - discount-server
+
+  checkout-http-server:
+    build:
+      context: .
+      target: development
+    command: npm run start:http-server
+    healthcheck:
+      test: curl --silent --fail localhost:8000/_health_check || exit 1
+      interval: 10s
+      retries: 5
+    env_file: .env
+    ports:
+      - 8000:8000
+    depends_on:
+      - discount-server

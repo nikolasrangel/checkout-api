@@ -9,3 +9,19 @@ test-functional:
 
 test:
 	make test-unit && make test-integration && make test-functional
+
+pre-build:
+	@cp .env.example .env
+
+docker-build-http-server:
+	@docker-compose build --no-cache checkout-http-server
+
+install-dependencies:
+	@npm i
+
+build: pre-build docker-build-http-server install-dependencies
+
+start-http-server:
+	@docker-compose up checkout-http-server
+
+up:	build start-http-server
