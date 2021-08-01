@@ -2,6 +2,7 @@ const { mergeRight } = require('ramda')
 
 const http = require('../../infra/server-http')
 const { createCheckoutEndpoint } = require('./endpoints')
+const { getLogger } = require('../../infra/logger')
 
 const getServerOptions = (serverProcess) => {
   const {
@@ -51,6 +52,27 @@ const createServer = (options) => {
 
   return server
 }
+
+;((logger = getLogger()) => {
+  try {
+    logger.info({
+      message: 'Starting HTTP server',
+    })
+
+    const server = createServer()
+
+    logger.info({
+      message: `HTTP server started listening on ${server.originalOptions.port} port`,
+    })
+  } catch (error) {
+    logger.fatal({
+      message: 'Failed to start HTTP server',
+      error: error.message,
+    })
+
+    process.exit(1)
+  }
+})()
 
 module.exports = {
   createServer,

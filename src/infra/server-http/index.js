@@ -40,6 +40,7 @@ const getServerConfigurations = (options) => {
     http.serverWithClients(clients),
     http.serverEndpointRegister(healthCheckEndpoint),
     http.serverWithFeatures(features),
+    http.serverWithAllOriginalOptions(options),
   ]
 }
 

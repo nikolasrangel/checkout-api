@@ -54,6 +54,12 @@ const serverWithFeatures = (features) => (server) => {
   return server
 }
 
+const serverWithAllOriginalOptions = (options) => (server) => {
+  server.originalOptions = options
+
+  return server
+}
+
 module.exports = {
   createServer,
   serverMiddlewareRegister,
@@ -63,4 +69,5 @@ module.exports = {
   getServerMiddlewares,
   serverWithClients,
   serverWithFeatures,
+  serverWithAllOriginalOptions,
 }
