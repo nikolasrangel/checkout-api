@@ -6,3 +6,6 @@ test-integration:
 
 test-functional:
 	@TEST_TYPE=functional docker-compose up --exit-code-from tests tests
+
+test:
+	make test-unit && make test-integration && make test-functional
