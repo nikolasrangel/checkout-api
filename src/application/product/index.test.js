@@ -1,25 +1,14 @@
 const test = require('ava')
 
-const { getDatabase, getProductById, getGiftProduct } = require('./index')
+const { getProductById, getGiftProduct } = require('./index')
+const productDatabase = require('../../infra/product-database')
 
 test.before((t) => {
-  const database = getDatabase('./products.json')
+  const database = productDatabase.getDatabase('./products.json')
 
   return (t.context = {
     database,
   })
-})
-
-test('getDatabase > should successfully returns products database', (t) => {
-  const database = getDatabase()
-
-  t.true(typeof database.Product === 'object')
-})
-
-test('getDatabase > should return an empty database when an error occur loading database', (t) => {
-  const database = getDatabase('invalid-json-products-file.json')
-
-  t.deepEqual(database.Product, [])
 })
 
 test('getProductById > should successfully get a product by id', async (t) => {

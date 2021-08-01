@@ -4,7 +4,7 @@ const test = require('ava')
 const { initialize } = require('./index')
 
 test.before((t) => {
-  const productsFilePath = '../../../application/product/products.json'
+  const productsFilePath = '../../../infra/product-database/products.json'
 
   return (t.context = {
     productsFilePath,

@@ -1,27 +1,4 @@
-const path = require('path')
-const { initialize } = require('../../external/database/json')
 const { getLogger } = require('../../infra/logger')
-
-const getDatabase = (databasePath, logger = getLogger()) => {
-  try {
-    const databaseFullPath = path.resolve(__dirname, databasePath)
-
-    const data = initialize(databaseFullPath)
-
-    return {
-      Product: data,
-    }
-  } catch (error) {
-    logger.error({
-      message: `Error loading products database`,
-      error: error.message,
-    })
-
-    return {
-      Product: [],
-    }
-  }
-}
 
 const getProductById =
   (database) =>
@@ -62,7 +39,6 @@ const getGiftProduct =
   }
 
 module.exports = {
-  getDatabase,
   getProductById,
   getGiftProduct,
 }
