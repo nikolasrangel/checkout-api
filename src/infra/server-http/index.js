@@ -60,7 +60,10 @@ const createServerEndpoint = (server, endpoint) => {
   return http.serverEndpointRegister(endpoint)(server)
 }
 
+const closeServer = (server) => server.listener.close()
+
 module.exports = {
   createServer,
   createServerEndpoint,
+  closeServer,
 }

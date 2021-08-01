@@ -1,3 +1,5 @@
+const { mergeRight } = require('ramda')
+
 const http = require('../../infra/server-http')
 const { createCheckoutEndpoint } = require('./endpoints')
 
@@ -24,10 +26,12 @@ const createServerEndpoints = (server) => {
   return server
 }
 
-const createServer = () => {
-  const options = getServerOptions(process)
+const closeServer = (server) => http.closeServer(server)
 
-  const server = http.createServer(options)
+const createServer = (options) => {
+  const serverOptions = mergeRight(getServerOptions(process), options)
+
+  const server = http.createServer(serverOptions)
 
   createServerEndpoints(server)
 
@@ -36,4 +40,5 @@ const createServer = () => {
 
 module.exports = {
   createServer,
+  closeServer,
 }

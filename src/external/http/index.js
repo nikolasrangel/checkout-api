@@ -6,7 +6,7 @@ const createServer = (options) => {
 
   const server = serverBuilder()
 
-  server.listen(port)
+  server.listener = server.listen(port)
 
   return server
 }

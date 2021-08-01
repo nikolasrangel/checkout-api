@@ -2,7 +2,7 @@ const test = require('ava')
 const request = require('supertest')
 const { equals } = require('ramda')
 
-const { createServer } = require('../../../src/entrypoint/http')
+const { createServer, closeServer } = require('../../../src/entrypoint/http')
 
 const expectedProductProperties = [
   'id',
@@ -87,4 +87,128 @@ test('server http > should get a checkout with products containing all expected 
 
   t.is(response.statusCode, 200)
   t.true(productsContainAllExpectedKeys)
+})
+
+test('server http > should get a shopping cart without gift when it is not Black Friday', async (t) => {
+  const server = createServer({
+    port: 8001,
+    isBlackFriday: false,
+  })
+
+  const requestBody = {
+    products: [
+      {
+        id: 1,
+        quantity: 2,
+      },
+    ],
+  }
+
+  const response = await request(server).post('/checkout').send(requestBody)
+  const shoppingCart = response.body
+
+  const productsQuantityFromRequest = requestBody.products.length
+  const productsQuantityFromResponse = shoppingCart.products.length
+
+  t.is(response.statusCode, 200)
+  t.is(productsQuantityFromResponse, productsQuantityFromRequest)
+
+  closeServer(server)
+})
+
+test('server http > should get a shopping cart with gift when it is Black Friday', async (t) => {
+  const server = createServer({
+    port: 8001,
+    isBlackFriday: true,
+  })
+
+  const requestBody = {
+    products: [
+      {
+        id: 1,
+        quantity: 2,
+      },
+    ],
+  }
+
+  const response = await request(server).post('/checkout').send(requestBody)
+  const shoppingCart = response.body
+
+  const productsQuantityFromRequest = requestBody.products.length
+  const productsQuantityFromResponse = shoppingCart.products.length
+
+  t.is(response.statusCode, 200)
+  t.is(productsQuantityFromResponse, productsQuantityFromRequest + 1)
+
+  closeServer(server)
+})
+
+test('server http > should get a shopping cart with gift when it is Black Friday and all products must contain the expected properties', async (t) => {
+  const server = createServer({
+    port: 8001,
+    isBlackFriday: true,
+  })
+
+  const requestBody = {
+    products: [
+      {
+        id: 1,
+        quantity: 2,
+      },
+    ],
+  }
+
+  const response = await request(server).post('/checkout').send(requestBody)
+  const shoppingCart = response.body
+
+  const productsQuantityFromRequest = requestBody.products.length
+  const productsQuantityFromResponse = shoppingCart.products.length
+
+  const productsContainAllExpectedKeys = shoppingCart.products.every(
+    (product) => {
+      const productProperties = Object.keys(product)
+
+      return equals(productProperties, expectedProductProperties)
+    }
+  )
+
+  t.is(response.statusCode, 200)
+  t.is(productsQuantityFromResponse, productsQuantityFromRequest + 1)
+  t.true(productsContainAllExpectedKeys)
+
+  closeServer(server)
+})
+
+test('server http > should get a shopping cart even if discount server can not be accessed', async (t) => {
+  const server = createServer({
+    port: 8001,
+    isBlackFriday: true,
+    serverDiscountAddress: 'not-a-valid-discount-address:50051',
+  })
+
+  const requestBody = {
+    products: [
+      {
+        id: 1,
+        quantity: 2,
+      },
+    ],
+  }
+
+  const response = await request(server).post('/checkout').send(requestBody)
+  const shoppingCart = response.body
+
+  const productsContainAllExpectedKeys = shoppingCart.products.every(
+    (product) => {
+      const productProperties = Object.keys(product)
+
+      return equals(productProperties, expectedProductProperties)
+    }
+  )
+
+  t.is(response.statusCode, 200)
+  t.true(productsContainAllExpectedKeys)
+  t.is(shoppingCart.total_discount, 0)
+
+  closeServer(server)
 })
