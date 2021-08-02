@@ -101,6 +101,15 @@ test('calculateProductDiscount > should correctly apply the discount when percen
   t.is(productDiscount, 4000)
 })
 
+test('calculateProductDiscount > should correctly apply the discount and the result must contain two decimal places', (t) => {
+  const amount = 15157
+  const percentageDiscount = 0.05000000074505806
+
+  const discount = calculateProductDiscount(amount, percentageDiscount)
+
+  t.is(discount, 757.85)
+})
+
 test('createProductObject > should create a product object for a gift with 1 as quantity and 0 for amount and discount', (t) => {
   const { giftProduct } = t.context
 

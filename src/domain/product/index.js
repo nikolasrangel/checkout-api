@@ -10,7 +10,11 @@ const calculateProductDiscount = (amount, percentageDiscount) => {
     throw new Error('Percentage discount argument must be a number')
   }
 
-  return amountNumber * percentageDiscountNumber
+  const percentageDiscountNumberFixed = Number(
+    percentageDiscountNumber.toFixed(2)
+  )
+
+  return amountNumber * percentageDiscountNumberFixed
 }
 
 const createProductObject = (product, discount = 0, order = {}) => {
